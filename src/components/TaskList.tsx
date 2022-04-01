@@ -3,6 +3,7 @@ import { useState } from 'react'
 import '../styles/tasklist.scss'
 
 import { FiTrash, FiCheckSquare } from 'react-icons/fi'
+import webpack from 'webpack';
 
 interface Task {
   id: number;
@@ -10,20 +11,29 @@ interface Task {
   isComplete: boolean;
 }
 
-export function TaskList() {
+export function TaskList(): any {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+    if(!newTaskTitle) {
+      return;
+    }
+    const novo:Task = {id:Math.random(), title:newTaskTitle, isComplete: false};
+    setTasks(t=> [... t, novo]);
+    setNewTaskTitle('');
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    const alterar:Task = tasks[tasks.findIndex(i=>i.id == id)];
+    alterar.isComplete = !alterar.isComplete;
+    setTasks(tasks);
   }
 
   function handleRemoveTask(id: number) {
-    // Remova uma task da listagem pelo ID
+    setTasks(tasks.filter(t=>t.id != id));
   }
 
   return (
@@ -35,7 +45,7 @@ export function TaskList() {
           <input 
             type="text" 
             placeholder="Adicionar novo todo" 
-            onChange={(e) => setNewTaskTitle(e.target.value)}
+            onChange={(e: { target: { value: any; }; }) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
           />
           <button type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
@@ -46,7 +56,7 @@ export function TaskList() {
 
       <main>
         <ul>
-          {tasks.map(task => (
+          {tasks.map((task: { id: number; isComplete: any; title: any; }) => (
             <li key={task.id}>
               <div className={task.isComplete ? 'completed' : ''} data-testid="task" >
                 <label className="checkbox-container">
