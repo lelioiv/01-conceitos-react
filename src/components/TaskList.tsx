@@ -17,18 +17,12 @@ export function TaskList(): any {
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
-    const nome: any = document.getElementById('title')?.innerText;
-    let title: string;
-    if(nome != '') {
-      title = nome;
-    }
-    else
-    {
+    if(!newTaskTitle) {
       return;
     }
-    const novo:Task = {id:Math.random(), title:title, isComplete: false};
-
-    setTasks(tasks.concat(novo));
+    const novo:Task = {id:Math.random(), title:newTaskTitle, isComplete: false};
+    setTasks(t=> [... t, novo]);
+    setNewTaskTitle('');
   }
 
   function handleToggleTaskCompletion(id: number) {
@@ -50,7 +44,6 @@ export function TaskList(): any {
         <div className="input-group">
           <input 
             type="text" 
-            id="title"
             placeholder="Adicionar novo todo" 
             onChange={(e: { target: { value: any; }; }) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
